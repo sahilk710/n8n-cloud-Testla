@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Technical Documentation - Financial Data Analysis Multi-Agent System</title>
+<style>
+  @media print { body { margin: 0.75in; } .page-break { page-break-before: always; } }
+  body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 850px; margin: 40px auto; padding: 0 20px; font-size: 14px; }
+  h1 { text-align: center; font-size: 26px; border-bottom: 3px solid #2563eb; padding-bottom: 15px; color: #1e3a5f; }
+  .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 30px; }
+  h2 { font-size: 20px; color: #2563eb; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 35px; }
+  h3 { font-size: 16px; color: #1e3a5f; margin-top: 25px; }
+  h4 { font-size: 14px; color: #444; margin-top: 20px; }
+  table { border-collapse: collapse; width: 100%; margin: 15px 0; font-size: 13px; }
+  th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background-color: #2563eb; color: white; }
+  tr:nth-child(even) { background-color: #f8f9fa; }
+  pre { background: #f4f4f5; border: 1px solid #ddd; border-radius: 6px; padding: 12px; font-size: 12px; font-family: monospace; overflow-x: auto; }
+  code { background: #f0f0f0; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+  .highlight-box { background: #eff6ff; border-left: 4px solid #2563eb; padding: 12px 16px; margin: 15px 0; }
+  .diagram-box { background: #f8f9fa; border: 2px solid #2563eb; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center; }
+</style>
+</head>
+<body>
+<h1>Technical Documentation</h1>
+<p class="subtitle">Financial Data Analysis Multi-Agent System<br>Built on n8n Cloud | April 2026<br><strong>Author:</strong> Sahil Kasliwal</p>
+<hr>
+
+<h2>1. System Architecture</h2>
+<h3>1.1 Overview</h3>
+<p>This system implements a multi-agent architecture on n8n Cloud where a Controller Agent orchestrates two specialized sub-agents to perform end-to-end financial data analysis. The architecture follows a <strong>hub-and-spoke pattern</strong>.</p>
+
+<h3>1.2 Architecture Diagram</h3>
+<div class="diagram-box">
+<pre style="text-align:left;display:inline-block;background:white;border:none;">
++------------------+     +------------------------+
+|   Chat Trigger   |---->|   Controller Agent     |
+| (User Interface) |     |   (Orchestrator)       |
++------------------+     | - OpenAI GPT Model     |
+                          | - Simple Memory        |
+                          +----------+-------------+
+                                     |
+                    +----------------+----------------+
+                    |                                 |
+             +------v--------+             +----------v-----------+
+             | Data Collector |             | Analyst Agent        |
+             | - OpenAI GPT  |             | - OpenAI GPT         |
+             | - HTTP Request|             | - Metric Calculator  |
+             |   (Alpha      |             | - Financial Health   |
+             |   Vantage)    |             |   Scorer (CUSTOM)    |
+             | - SerpAPI     |             +----------------------+
+             +---------------+
+</pre>
+</div>
+
+<h3>1.3 Data Flow</h3>
+<ol>
+<li>User sends a natural language query via Chat Trigger</li>
+<li>Controller Agent parses the query and identifies the stock ticker</li>
+<li>Controller calls Data Collector Agent with ticker and data requirements</li>
+<li>Data Collector fetches price data (HTTP Request) and news (SerpAPI)</li>
+<li>Data Collector returns structured data to Controller</li>
+<li>Controller passes raw data to Analyst Agent</li>
+<li>Analyst runs Metric Calculator and Financial Health Scorer</li>
+<li>Analyst returns analysis to Controller</li>
+<li>Controller formats the final report and sends it to the user</li>
+</ol>
+
+<div class="page-break"></div>
+<h2>2. Agent Specifications</h2>
+
+<h3>2.1 Controller Agent (Orchestrator)</h3>
+<table><tr><th>Property</th><th>Value</th></tr>
+<tr><td>Node Type</td><td>AI Agent</td></tr>
+<tr><td>Model</td><td>OpenAI GPT-5-mini</td></tr>
+<tr><td>Memory</td><td>Simple Memory (Window Buffer)</td></tr>
+<tr><td>Role</td><td>Parse queries, delegate to sub-agents, compile final report</td></tr></table>
+
+<h3>2.2 Data Collector Agent (Sub-Agent #1)</h3>
+<table><tr><th>Property</th><th>Value</th></tr>
+<tr><td>Node Type</td><td>AI Agent Tool</td></tr>
+<tr><td>Model</td><td>OpenAI GPT-5-mini</td></tr>
+<tr><td>Tools</td><td>HTTP Request, SerpAPI</td></tr>
+<tr><td>Role</td><td>Fetch stock prices and financial news</td></tr></table>
+
+<h3>2.3 Analyst Agent (Sub-Agent #2)</h3>
+<table><tr><th>Property</th><th>Value</th></tr>
+<tr><td>Node Type</td><td>AI Agent Tool</td></tr>
+<tr><td>Model</td><td>OpenAI GPT-5-mini</td></tr>
+<tr><td>Tools</td><td>Metric Calculator (Code), Financial Health Scorer (Custom)</td></tr>
+<tr><td>Role</td><td>Process data, calculate metrics, generate insights</td></tr></table>
+
+<div class="page-break"></div>
+<h2>3. Tool Specifications</h2>
+
+<h3>3.1 HTTP Request Tool (Alpha Vantage API)</h3>
+<table><tr><th>Property</th><th>Value</th></tr>
+<tr><td>Method</td><td>GET</td></tr>
+<tr><td>Base URL</td><td>https://www.alphavantage.co/query</td></tr>
+<tr><td>Function</td><td>TIME_SERIES_DAILY</td></tr>
+<tr><td>Output</td><td>Daily OHLCV data (last ~100 trading days)</td></tr></table>
+
+<h3>3.2 SerpAPI (Web Search Tool)</h3>
+<table><tr><th>Property</th><th>Value</th></tr>
+<tr><td>Type</td><td>SerpAPI Tool</td></tr>
+<tr><td>Purpose</td><td>Financial news and sentiment search</td></tr>
+<tr><td>Rate Limit</td><td>100 searches/month (free tier)</td></tr></table>
+
+<h3>3.3 Metric Calculator (Code Tool)</h3>
+<table><tr><th>Property</th><th>Value</th></tr>
+<tr><td>Language</td><td>JavaScript</td></tr>
+<tr><td>Input</td><td>JSON with prices array of {date, close, volume}</td></tr>
+<tr><td>Output</td><td>Moving averages, % changes, volatility, volume trend</td></tr></table>
+
+<h3>3.4 Financial Health Scorer (Custom Tool)</h3>
+<div class="highlight-box"><strong>This is the custom tool built specifically for this project.</strong></div>
+<table><tr><th>Property</th><th>Value</th></tr>
+<tr><td>Language</td><td>JavaScript</td></tr>
+<tr><td>Type</td><td>Custom composite scoring algorithm</td></tr>
+<tr><td>Input</td><td>pct_change_30d, volatility_pct, volume_trend, sentiment</td></tr>
+<tr><td>Output</td><td>Score (0-100), breakdown, rating, interpretation</td></tr></table>
+
+<h4>Scoring Algorithm</h4>
+<table><tr><th>Factor</th><th>Weight</th><th>Logic</th></tr>
+<tr><td>Price Momentum</td><td>30%</td><td>Maps 30d % change: -20%=0, +20%=100</td></tr>
+<tr><td>Volatility</td><td>25%</td><td>Lower is better: 0%=100, 5%+=0</td></tr>
+<tr><td>Volume Trend</td><td>20%</td><td>Evaluates volume direction + price direction</td></tr>
+<tr><td>Sentiment</td><td>25%</td><td>Positive=85, Neutral=55, Mixed=45, Negative=15</td></tr></table>
+
+<div class="highlight-box">
+<code>Score = (Momentum x 0.30) + (Volatility x 0.25) + (Volume x 0.20) + (Sentiment x 0.25)</code>
+</div>
+
+<table><tr><th>Score Range</th><th>Rating</th><th>Interpretation</th></tr>
+<tr><td>70-100</td><td>Strong</td><td>Positive momentum and favorable conditions</td></tr>
+<tr><td>45-69</td><td>Moderate</td><td>Mixed signals, monitor closely</td></tr>
+<tr><td>0-44</td><td>Weak</td><td>Weakness across multiple factors</td></tr></table>
+
+<h4>Input Validation & Error Handling</h4>
+<ul>
+<li>Validates numeric fields (pct_change_30d, volatility_pct)</li>
+<li>Validates enum fields (volume_trend, sentiment)</li>
+<li>try/catch wrapping with structured error responses</li>
+</ul>
+
+<div class="page-break"></div>
+<h2>4. Memory System</h2>
+<p>The Controller uses n8n Simple Memory (Window Buffer) for conversation context. This enables follow-up questions, comparative analysis, and contextual responses. Sub-agents receive context via prompt passthrough.</p>
+
+<h2>5. Feedback Loop</h2>
+<ol>
+<li>Controller sends data request to Data Collector</li>
+<li>Data Collector returns data (may be partial)</li>
+<li>Controller evaluates completeness</li>
+<li>If insufficient, re-queries Data Collector with adjusted parameters</li>
+<li>Controller sends data to Analyst, then compiles final report</li>
+</ol>
+
+<h2>6. Error Handling Strategy</h2>
+<table><tr><th>Layer</th><th>Handling</th></tr>
+<tr><td>API Failure (Alpha Vantage)</td><td>Notes failure, attempts news search fallback</td></tr>
+<tr><td>API Failure (SerpAPI)</td><td>Returns partial data without news</td></tr>
+<tr><td>Invalid Ticker</td><td>Returns error, Controller informs user</td></tr>
+<tr><td>Insufficient Data</td><td>Returns null for unavailable metrics</td></tr>
+<tr><td>Code Errors</td><td>try/catch returns structured error JSON</td></tr></table>
+
+<h2>7. Challenges and Limitations</h2>
+<h3>Challenges</h3>
+<ol>
+<li><strong>API Rate Limits</strong> - Alpha Vantage free tier: 25 requests/day</li>
+<li><strong>Data Freshness</strong> - Stock data may be delayed</li>
+<li><strong>Sub-Agent Communication</strong> - Required careful prompt engineering</li>
+<li><strong>Token Usage</strong> - Multi-agent calls optimized with gpt-5-mini</li>
+</ol>
+<h3>Limitations</h3>
+<ol>
+<li>Daily data only (no intraday)</li>
+<li>Health Score may be incomplete if APIs fail</li>
+<li>Sentiment based on news search, not dedicated NLP</li>
+<li>Free tier limits restrict daily analyses</li>
+</ol>
+
+<h2>8. Future Improvements</h2>
+<ul>
+<li>Add more data sources (Yahoo Finance, Finnhub)</li>
+<li>Dedicated sentiment analysis using NLP models</li>
+<li>Technical indicators (RSI, MACD, Bollinger Bands)</li>
+<li>Scheduled reports via n8n cron triggers</li>
+<li>Portfolio tracking across multiple stocks</li>
+</ul>
+
+<hr>
+<p style="text-align:center;color:#888;font-size:12px;margin-top:40px;">Financial Data Analysis Multi-Agent System | n8n Cloud | April 2026 | Sahil Kasliwal</p>
+</body>
+</html>

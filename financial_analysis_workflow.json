@@ -1,0 +1,375 @@
+{
+  "name": "Financial Data Analysis - Multi-Agent System",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        0
+      ],
+      "id": "e678469d-cd66-429e-8c3b-c11bae65c7b3",
+      "name": "When chat message received",
+      "webhookId": "59f0d3ac-78d1-46a8-b364-85d57d667a6e"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        224
+      ],
+      "id": "ceee4193-36fe-4dd2-956b-763e488be34f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "wz8CiR92qfO0tgcD",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        224
+      ],
+      "id": "9d35521b-e140-4927-b715-0818c08662d8",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Fetches real-time stock prices, historical price data, and financial news for a given stock ticker. Provide: ticker symbol, data type (price, historical, news), and optional date range.\n",
+        "text": "={{ $json.chatInput }}\n",
+        "options": {
+          "systemMessage": "You are the Data Collector Agent — a specialist in fetching financial data.\n\nYour Role: Gather stock market data from multiple sources and return it in a clean, structured format.\n\nYour Tools:\n1. Stock API (HTTP Request) — Fetches real-time and historical stock prices from Alpha Vantage\n2. Web Search (SerpAPI) — Searches for recent financial news and market sentiment\n\nInstructions:\n1. Parse the request to identify: ticker symbol, data type, date range\n2. Use the Stock API tool to fetch price data\n3. Use the Web Search tool to find recent news about the stock\n4. Combine and structure all collected data\n5. Return a JSON-formatted response\n\nOutput Format:\nReturn data as JSON with: ticker, current_price, historical_prices array, recent_news array, data_freshness, api_status\n\nError Handling:\n- If Stock API fails, note it in api_status and try to get price data from news search\n- If ticker is invalid, return an error message\n- Always return whatever data you could collect, even if partial\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        720,
+        224
+      ],
+      "id": "9483c130-c0ad-42df-a5a0-ea01cd83c6e2",
+      "name": "data_collector"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        608,
+        432
+      ],
+      "id": "53234978-b573-4682-a175-54520942c284",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "wz8CiR92qfO0tgcD",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Fetches daily stock price data for a given ticker symbol from Alpha Vantage API",
+        "url": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={ticker}&outputsize=compact&apikey=3AF3Y0R4T1XAT4V9",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "function",
+              "value": "TIME_SERIES_DAILY"
+            },
+            {
+              "name": "symbol",
+              "value": "{ticker} "
+            },
+            {
+              "name": "outputsize",
+              "value": "compact"
+            },
+            {
+              "name": "api",
+              "value": "3AF3Y0R4T1XAT4V9"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        736,
+        432
+      ],
+      "id": "fb6ac0e2-c44c-4dc5-bec1-76192a5b6321",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        864,
+        432
+      ],
+      "id": "0dd6084f-2120-4e3a-8b84-95f1a639d06d",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "KYHERLMFM9X6UIsy",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        992,
+        432
+      ],
+      "id": "bebd2b91-3305-44cc-83b4-5f536a374124",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "wz8CiR92qfO0tgcD",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Calculates financial metrics from stock price data. Input: JSON with 'prices' array of {date, close, volume} objects. Returns: moving averages, percentage changes, volatility, and volume trend.\n",
+        "jsCode": "const input = JSON.parse($input.item.json.chatInput || '{}');\nconst prices = input.prices || [];\n\nif (!prices || prices.length === 0) {\n  return { json: { error: 'No price data provided', metrics: null } };\n}\n\nconst sorted = [...prices].sort((a, b) => new Date(b.date) - new Date(a.date));\n\nfunction movingAverage(data, period) {\n  if (data.length < period) return null;\n  const slice = data.slice(0, period);\n  const sum = slice.reduce((acc, p) => acc + parseFloat(p.close), 0);\n  return Math.round((sum / period) * 100) / 100;\n}\n\nfunction pctChange(data, period) {\n  if (data.length < period + 1) return null;\n  const current = parseFloat(data[0].close);\n  const past = parseFloat(data[period].close);\n  return Math.round(((current - past) / past) * 10000) / 100;\n}\n\nfunction calculateVolatility(data) {\n  if (data.length < 2) return null;\n  const returns = [];\n  for (let i = 0; i < Math.min(data.length - 1, 30); i++) {\n    const today = parseFloat(data[i].close);\n    const yesterday = parseFloat(data[i + 1].close);\n    returns.push((today - yesterday) / yesterday);\n  }\n  const mean = returns.reduce((a, b) => a + b, 0) / returns.length;\n  const variance = returns.reduce((a, r) => a + Math.pow(r - mean, 2), 0) / returns.length;\n  return Math.round(Math.sqrt(variance) * 10000) / 100;\n}\n\nfunction volumeTrend(data) {\n  if (data.length < 14) return 'insufficient_data';\n  const recent7 = data.slice(0, 7).reduce((a, p) => a + parseFloat(p.volume || 0), 0) / 7;\n  const prior7 = data.slice(7, 14).reduce((a, p) => a + parseFloat(p.volume || 0), 0) / 7;\n  if (prior7 === 0) return 'unknown';\n  const change = (recent7 - prior7) / prior7;\n  if (change > 0.1) return 'increasing';\n  if (change < -0.1) return 'decreasing';\n  return 'stable';\n}\n\nconst currentPrice = sorted.length > 0 ? parseFloat(sorted[0].close) : null;\nconst volatility = calculateVolatility(sorted);\n\nreturn {\n  json: {\n    metrics: {\n      current_price: currentPrice,\n      moving_avg_7d: movingAverage(sorted, 7),\n      moving_avg_30d: movingAverage(sorted, 30),\n      pct_change_7d: pctChange(sorted, 7),\n      pct_change_30d: pctChange(sorted, 30),\n      volatility_pct: volatility,\n      volatility_level: volatility > 3 ? 'High' : volatility > 1.5 ? 'Medium' : 'Low',\n      volume_trend: volumeTrend(sorted),\n      data_points_used: sorted.length\n    }\n  }\n};\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        1120,
+        432
+      ],
+      "id": "8f938da5-951b-4bc5-9ecd-5645183adc1b",
+      "name": "metric_calculator"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the Controller Agent — a financial data analysis orchestrator.\n\nYour Role: You coordinate specialized sub-agents to analyze stocks and financial data.\n\nYour Sub-Agents:\n1. Data Collector Agent — Call this to fetch stock prices, historical data, and financial news. Provide: ticker symbol, data type needed, date range.\n2. Analyst Agent — Call this to analyze raw data. Provide: the raw data from Data Collector, type of analysis needed.\n\nWorkflow:\n1. Parse the user query to identify stock ticker(s), time period, analysis type\n2. Call Data Collector to fetch data\n3. Pass collected data to Analyst for processing\n4. If analysis is incomplete, re-query Data Collector\n5. Format the final response as a structured report\n\nOutput Format:\n### Stock Analysis Report: [TICKER]\n**Date:** [Current Date]\n#### Summary\n[2-3 sentence overview]\n#### Key Metrics\n- Current Price, 30-Day Change, Volume Trend, Volatility\n#### Financial Health Score\n- Score: X/100 (Strong/Moderate/Weak)\n#### Insights\n[3-5 bullet points]\n#### Risk Factors\n[2-3 considerations]\n#### Disclaimer\n*This analysis is for educational purposes only and not financial advice.*\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        560,
+        0
+      ],
+      "id": "56c237f9-4b6a-4a48-ad1f-23852f8355a4",
+      "name": "Controller Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Analyzes raw financial data and generates insights, metrics, and health scores. Provide: the raw stock data from Data Collector and the type of analysis needed.\n",
+        "text": "={{ $json.chatInput }}\n",
+        "options": {
+          "systemMessage": "You are the Analyst Agent — a specialist in financial data analysis.\n\nYour Role: Take raw financial data and produce meaningful analysis, metrics, and actionable insights.\n\nYour Tools:\n1. Metric Calculator — Computes financial metrics (moving averages, % change, volatility)\n2. Financial Health Scorer — Calculates a composite health score (0-100) based on momentum, volatility, volume, and sentiment\n\nInstructions:\n1. Parse the incoming data to identify available data points\n2. Use the Metric Calculator to compute: 7-day and 30-day moving averages, percentage changes, price volatility, volume trend\n3. Use the Financial Health Scorer to generate a composite score\n4. Synthesize all metrics into actionable insights\n5. Identify risk factors based on data patterns\n\nAnalysis Guidelines:\n- Base all insights on actual data, not assumptions\n- Clearly state if data is insufficient for certain analyses\n- Be objective — present both bullish and bearish signals\n- Quantify observations whenever possible\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        1104,
+        224
+      ],
+      "id": "72a4a895-3aaf-41c8-b33c-a11d4e168842",
+      "name": "analyst",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "description": "Custom Financial Health Scorer - Calculates a composite health score (0-100) for a stock based on price momentum, volatility, volume trend, and sentiment. Input: JSON with pct_change_30d (number), volatility_pct (number), volume_trend (string), sentiment (string). Returns: composite score, breakdown, and rating.",
+        "jsCode": "try {\n  const input = JSON.parse($input.item.json.chatInput || '{}');\n  \n  const pctChange30d = parseFloat(input.pct_change_30d);\n  const volatilityPct = parseFloat(input.volatility_pct);\n  const volumeTrend = (input.volume_trend || 'stable').toLowerCase();\n  const sentiment = (input.sentiment || 'neutral').toLowerCase();\n\n  if (isNaN(pctChange30d)) {\n    return { json: { error: 'Invalid input: pct_change_30d must be a number', score: null } };\n  }\n  if (isNaN(volatilityPct)) {\n    return { json: { error: 'Invalid input: volatility_pct must be a number', score: null } };\n  }\n\n  // Momentum Score (30% weight)\n  let momentumScore;\n  if (pctChange30d >= 20) momentumScore = 100;\n  else if (pctChange30d <= -20) momentumScore = 0;\n  else momentumScore = Math.round(((pctChange30d + 20) / 40) * 100);\n\n  // Volatility Score (25% weight) - lower is better\n  let volatilityScore;\n  if (volatilityPct <= 0) volatilityScore = 100;\n  else if (volatilityPct >= 5) volatilityScore = 0;\n  else volatilityScore = Math.round(((5 - volatilityPct) / 5) * 100);\n\n  // Volume Score (20% weight)\n  const pricePositive = pctChange30d > 0;\n  let volumeScore;\n  switch (volumeTrend) {\n    case 'increasing': volumeScore = pricePositive ? 85 : 40; break;\n    case 'stable': volumeScore = 60; break;\n    case 'decreasing': volumeScore = pricePositive ? 50 : 30; break;\n    default: volumeScore = 50;\n  }\n\n  // Sentiment Score (25% weight)\n  let sentimentScore;\n  switch (sentiment) {\n    case 'positive': sentimentScore = 85; break;\n    case 'neutral': sentimentScore = 55; break;\n    case 'mixed': sentimentScore = 45; break;\n    case 'negative': sentimentScore = 15; break;\n    default: sentimentScore = 50;\n  }\n\n  // Composite Score\n  const compositeScore = Math.round(\n    momentumScore * 0.30 +\n    volatilityScore * 0.25 +\n    volumeScore * 0.20 +\n    sentimentScore * 0.25\n  );\n\n  let rating;\n  if (compositeScore >= 70) rating = 'Strong';\n  else if (compositeScore >= 45) rating = 'Moderate';\n  else rating = 'Weak';\n\n  return {\n    json: {\n      health_score: {\n        total: compositeScore,\n        rating: rating,\n        breakdown: {\n          momentum: { score: momentumScore, weight: '30%', input: pctChange30d + '% 30d change' },\n          volatility: { score: volatilityScore, weight: '25%', input: volatilityPct + '% daily volatility' },\n          volume: { score: volumeScore, weight: '20%', input: volumeTrend + ' trend' },\n          sentiment: { score: sentimentScore, weight: '25%', input: sentiment + ' sentiment' }\n        },\n        interpretation: compositeScore >= 70\n          ? 'Stock shows strong fundamentals with positive momentum.'\n          : compositeScore >= 45\n          ? 'Stock shows moderate health with mixed signals. Monitor closely.'\n          : 'Stock shows weakness across multiple factors. Exercise caution.'\n      }\n    }\n  };\n} catch (error) {\n  return { json: { error: 'Health Scorer failed: ' + error.message, score: null } };\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        1248,
+        432
+      ],
+      "id": "5f31072f-e841-44cb-a38b-ee545cdb38d8",
+      "name": "financial_health_scorer"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Controller Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Controller Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Controller Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data_collector": {
+      "ai_tool": [
+        [
+          {
+            "node": "Controller Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "data_collector",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "data_collector",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "data_collector",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "analyst",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "metric_calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "analyst",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "analyst": {
+      "ai_tool": [
+        [
+          {
+            "node": "Controller Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "financial_health_scorer": {
+      "ai_tool": [
+        [
+          {
+            "node": "analyst",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "204f658c-acbd-499f-ae6e-c8f4d520291b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "603851e5ead102335e4755a5c0c26070db0485d85e42dd953883c81fbce96a5c"
+  },
+  "id": "eE5CwMswBpTAsxmj",
+  "tags": []
+}

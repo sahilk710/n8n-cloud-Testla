@@ -162,10 +162,10 @@
 
 | Test ID | Status | Response Time | Notes |
 |---------|--------|---------------|-------|
-| TC-001 | PASS | 8.1s | Full report generated for TSLA |
-| TC-002 | | | |
-| TC-003 | | | |
-| TC-004 | | | |
+| TC-001 | PASS | 8.1s | Full report generated, TSLA $360.59, ~11873 tokens |
+| TC-002 | PASS | 6.3s | AAPL $255.92, WWDC news context, ~8955 tokens |
+| TC-003 | PASS | 14.8s | 7 detailed risks with likelihood/impact/mitigation, ~16941 tokens |
+| TC-004 | PASS | 10.2s | GOOGL health score with profitability, cash coverage, weighted components, ~17034 tokens |
 | TC-005 | | | |
 | TC-006 | | | |
 | TC-007 | | | |

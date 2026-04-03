@@ -2,6 +2,10 @@
 
 A multi-agent financial data analysis system built on n8n Cloud. Users send stock analysis queries via chat, and a team of AI agents collaboratively fetches data, computes metrics, and returns structured investment reports.
 
+## Workflow in Action
+
+![Workflow Execution](screenshots/workflow-execution.png)
+
 ## Architecture Overview
 
 ```

@@ -38,9 +38,9 @@
 
 | Test ID | Query | Status | Response Time | Key Observations |
 |---------|-------|--------|---------------|------------------|
-| TC-001 | Analyze Tesla stock | PASS | 8.1s | Full report generated |
-| TC-002 | AAPL stock state | | | |
-| TC-003 | MSFT risk analysis | | | |
+| TC-001 | Analyze Tesla stock | PASS | 8.1s | Full report generated, TSLA $360.59, ~11873 tokens |
+| TC-002 | AAPL stock state | PASS | 6.3s | AAPL $255.92, WWDC news context, ~8955 tokens |
+| TC-003 | MSFT risk analysis | PASS | 14.8s | 7 detailed risks with likelihood/impact/mitigation, ~16941 tokens |
 | TC-004 | GOOGL health score | | | |
 | TC-005 | Follow-up question | | | |
 | TC-006 | Invalid ticker | | | |
@@ -55,9 +55,9 @@
 
 | Metric | Result |
 |--------|--------|
-| Average Response Time | ~8s (TC-001) |
-| Success Rate | 1/1 (more tests pending) |
-| Avg Token Usage | ~11,873 per query |
-| All Agents Triggered | Yes |
+| Average Response Time | ~9.7s (across 3 tests) |
+| Success Rate | 3/3 (100%) |
+| Avg Token Usage | ~12,590 per query |
+| All Agents Triggered | Yes (Controller, Data Collector, Analyst) |
 | Memory Working | Pending (TC-005) |
 | Error Handling | Pending (TC-006) |
